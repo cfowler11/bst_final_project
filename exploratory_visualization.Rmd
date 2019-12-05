@@ -1,0 +1,79 @@
+---
+title: "boxplots and scatterplot"
+author: "Charlotte Fowler"
+date: "12/5/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+
+
+```{r}
+lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg)
+         )
+```
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(x = ln_sal_avg)) + 
+  geom_density() + 
+  geom_histogram()
+```
+
+
+
+```{r}
+lawsuit %>% 
+  recode(
+    
+  )
+  ggplot(aes(y = sal_avg, x = factor(gender))) + 
+  geom_boxplot()
+```
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = factor(clin))) + 
+  geom_boxplot()
+```
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = factor(cert))) + 
+  geom_boxplot()
+```
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = factor(rank))) + 
+  geom_boxplot()
+```
+
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = factor(dept))) + 
+  geom_boxplot()
+```
+
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = prate)) + 
+  geom_point()
+```
+
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = exper)) + 
+  geom_point()
+```
+
