@@ -2,7 +2,7 @@
 title: "EDA"
 author: "Rebecca Silva"
 date: "12/5/2019"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -20,7 +20,7 @@ lawsuit = read_csv("./Lawsuit.csv") %>%
 ```{r, message = FALSE, echo = FALSE, warning=FALSE}
 
 # change variable names/labels
-my_labels <- list(dept = "Dept (n%)", gender = "Gender, Male (n%)", clin = "Clin, Clinical Emphasis (n%)", cert = "Certfified, Yes (n%)", prate = "Publication rate", expersal94 = "Salary 1994", sal95 = "Salary 1995", sal_avg = "Avg Salary") 
+my_labels <- list(dept = "Dept (n%)", gender = "Gender, Male (n%)", clin = "Clin, Clinical Emphasis (n%)", cert = "Certfified, Yes (n%)", prate = "Publication rate", exper = "Experience (years)", rank = "Rank (n%)", sal94 = "Salary 1994", sal95 = "Salary 1995", sal_avg = "Avg Salary") 
 
 # clean the output
 my_controls <- tableby.control(
@@ -37,15 +37,19 @@ my_controls <- tableby.control(
                countpct = "N (%)"))
 
 # make categories factor vars to show N (%)
-data_tabl<- data %>% 
-          mutate(gender = factor(gender, labels= c("Female", "Male"))) 
+data_tabl<- lawsuit %>% 
+          mutate(gender = factor(gender, labels= c("Female", "Male")), 
+                 dept = factor(dept, labels = c("Bio/Molecular Biology", "Physiology", "Genetics", "Pediatrics", "Medicine", "Surgery")), 
+                 clin = factor(clin, labels= c("Research emphasis", "Clinical emphasis")),
+                 cert = factor(cert, labels= c("Not certified", "Board certified")),
+                 rank = factor(rank, labels= c("Assistant", "Associate", "Full professor")))
 
 ```
 
 
 ```{r, results="asis", echo = FALSE}
 # tabulation by group
-tab1 <- tableby(~totalcost + e_rvisits + age + gender + complications + duration, 
+tab1 <- tableby(~dept + gender + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
                 data=data_tabl, 
                 control = my_controls)
 summary(tab1, title = "Descriptive Statistics", 
