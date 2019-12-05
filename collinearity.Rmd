@@ -17,6 +17,14 @@ lawsuit_cor = lawsuit %>%
   select(-id, - sal94, -sal95)
 cor(lawsuit_cor)%>%                            
   corrplot(method = "circle", type = "upper", diag=FALSE, title = "Correlation Plot")
+
+## Matrix 
+res <- cor(lawsuit_cor)
+round(res, 2)
+
+## Heatmap
+col<- colorRampPalette(c("blue", "white", "red"))(20)
+heatmap(x = res, col = col, symm = TRUE)
 ```
 
 There may be a collinearity issue where we can see from the plot above. 
