@@ -1,0 +1,76 @@
+---
+title: "confounding"
+author: "Charlotte Fowler"
+date: "12/5/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+
+
+```{r}
+lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery"), 
+    
+         )
+```
+
+
+```{r}
+base_mod = lm(ln_sal_avg ~ gender, data = lawsuit)
+dept_mod = lm(ln_sal_avg ~ gender + dept, data = lawsuit)
+clin_mod = lm(ln_sal_avg ~ gender + clin, data = lawsuit)
+cert_mod = lm(ln_sal_avg ~ gender + cert, data = lawsuit)
+prate_mod = lm(ln_sal_avg ~ gender + prate, data = lawsuit)
+exper_mod = lm(ln_sal_avg ~ gender + exper, data = lawsuit)
+rank_mod = lm(ln_sal_avg ~ gender + rank, data = lawsuit)
+inter_dept_mod = lm(ln_sal_avg ~ gender * dept, data = lawsuit)
+inter_clin_mod = lm(ln_sal_avg ~ gender * clin, data = lawsuit)
+inter_cert_mod = lm(ln_sal_avg ~ gender * cert, data = lawsuit)
+inter_prate_mod = lm(ln_sal_avg ~ gender * prate, data = lawsuit)
+inter_exper_mod = lm(ln_sal_avg ~ gender * exper, data = lawsuit)
+inter_rank_mod = lm(ln_sal_avg ~ gender * rank, data = lawsuit)
+```
+
+
+```{r}
+summary(base_mod)
+summary(dept_mod)
+summary(clin_mod)
+summary(cert_mod)
+summary(prate_mod)
+summary(exper_mod)
+summary(rank_mod)
+```
+All vars besides rank are confounders in that they exagerate relationship of interest when not being controlled for.  
+
+(check 10%)
+
+```{r}
+summary(inter_dept_mod)
+summary(inter_clin_mod)
+summary(inter_cert_mod)
+summary(inter_prate_mod)
+summary(inter_exper_mod)
+summary(inter_rank_mod)
+```
+Only rank has significant interaction, which implies that rank is a possible effect modifier.
+
+```{r}
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = gender, fill = rank)) + 
+  geom_bar(stat = "identity", position = "dodge")
+```
+

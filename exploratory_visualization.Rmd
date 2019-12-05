@@ -27,31 +27,36 @@ lawsuit %>%
   geom_density() + 
   geom_histogram()
 ```
-
+```{r}
+lawsuit %>% 
+  ggplot(aes(x = ln_sal_avg)) + 
+  geom_density()
+```
 
 
 ```{r}
 lawsuit %>% 
-  recode(
-    
-  )
+  mutate(gender = recode(gender, "0" = "female", "1" = "male")) %>% 
   ggplot(aes(y = sal_avg, x = factor(gender))) + 
   geom_boxplot()
 ```
 
 ```{r}
 lawsuit %>% 
+  mutate(clin = recode(clin, "0" = "research", "1" = "clinical")) %>%
   ggplot(aes(y = sal_avg, x = factor(clin))) + 
   geom_boxplot()
 ```
 
 ```{r}
 lawsuit %>% 
+  mutate(cert = recode(cert, "0" = "not certified", "1" = "certified")) %>%
   ggplot(aes(y = sal_avg, x = factor(cert))) + 
   geom_boxplot()
 ```
 ```{r}
 lawsuit %>% 
+  mutate(rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor")) %>%
   ggplot(aes(y = sal_avg, x = factor(rank))) + 
   geom_boxplot()
 ```
@@ -59,6 +64,7 @@ lawsuit %>%
 
 ```{r}
 lawsuit %>% 
+  mutate(dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery")) %>%
   ggplot(aes(y = sal_avg, x = factor(dept))) + 
   geom_boxplot()
 ```
