@@ -1,0 +1,31 @@
+---
+title: "correlation"
+author: "Yingxi Ji"
+date: "12/5/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(corrplot)
+```
+
+```{r}
+sapply(lawsuit, function(na) sum(is.na(na)))
+lawsuit_cor = lawsuit %>% 
+  select(-id, - sal94, -sal95)
+cor(lawsuit_cor)%>%                            
+  corrplot(method = "circle", type = "upper", diag=FALSE, title = "Correlation Plot")
+```
+
+There may be a collinearity issue where we can see from the plot above. 
+
+`prate` is highly correlated with `dept` and `clin`. 
+
+`clin` is highly correlated with`dept`.
+
+`rank` is highly correlated with `exper`.
+
+
+
