@@ -9,9 +9,15 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(corrplot)
+library(ggplot2)
 ```
 
-```{r}
+```{r, message=FALSE}
+lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(sal_avg = (sal94 + sal95)/2)
+
+
 sapply(lawsuit, function(na) sum(is.na(na)))
 lawsuit_cor = lawsuit %>% 
   select(-id, - sal94, -sal95)
@@ -25,6 +31,19 @@ round(res, 2)
 ## Heatmap
 col<- colorRampPalette(c("blue", "white", "red"))(20)
 heatmap(x = res, col = col, symm = TRUE)
+
+
+library(GGally)
+lawsuit_cor%>% 
+  GGally::ggpairs(
+    columns = c("dept", "clin", "rank", "cert", "prate", "exper"),
+    lower = list(
+      continous = "smooth", 
+      combo = "box",
+      mapping = aes(color = gender),
+      upper = "blank"
+    )
+  )
 ```
 
 There may be a collinearity issue where we can see from the plot above. 
