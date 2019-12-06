@@ -5,11 +5,11 @@ date: "12/6/2019"
 output: pdf_document
 ---
 
-```{r}
+```{r,message=FALSE}
 library(tidyverse)
 ```
 
-```{r}
+```{r, message=FALSE}
 lawsuit_full_prof =  read_csv("./Lawsuit.csv") %>% 
   janitor::clean_names() %>% 
   mutate(
@@ -58,18 +58,37 @@ lawsuit_assistant =  read_csv("./Lawsuit.csv") %>%
 full_prof_mod = lm(ln_sal_avg ~ . - prate , lawsuit_full_prof)
 
 summary(full_prof_mod)
-```
 
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(full_prof_mod)
+
+shapiro.test(residuals(full_prof_mod))
+
+```
+The residual has constant variance and the the residuals are normally distributed. 
 
 ```{r}
 assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
 
 summary(assistant_mod)
-```
 
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(assistant_mod)
+
+shapiro.test(residuals(assistant_mod))
+
+```
 
 ```{r}
 associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
 
 summary(associate_mod)
+
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(associate_mod)
+
+shapiro.test(residuals(associate_mod))
 ```
