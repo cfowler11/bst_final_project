@@ -7,6 +7,8 @@ output: pdf_document
 
 ```{r,message=FALSE}
 library(tidyverse)
+library(faraway)
+library(car)
 ```
 
 ```{r, message=FALSE}
@@ -64,9 +66,11 @@ par(mfrow=c(2,2))
 plot(full_prof_mod)
 
 shapiro.test(residuals(full_prof_mod))
-
+vif(full_prof_mod)
 ```
-The residual has constant variance and the the residuals are normally distributed. 
+
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
 
 ```{r}
 assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
@@ -79,7 +83,12 @@ plot(assistant_mod)
 
 shapiro.test(residuals(assistant_mod))
 
+vif(assistant_mod)
+
 ```
+
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
 
 ```{r}
 associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
@@ -91,4 +100,8 @@ par(mfrow=c(2,2))
 plot(associate_mod)
 
 shapiro.test(residuals(associate_mod))
+vif(associate_mod)
 ```
+
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
