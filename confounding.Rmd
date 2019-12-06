@@ -74,3 +74,25 @@ lawsuit %>%
   geom_bar(stat = "identity", position = "dodge")
 ```
 
+```{r}
+library(caret)
+train_ctrl_cv10 <- trainControl(method = "cv", number = 10)
+
+
+set.seed(1)
+back_step <- train(
+    ln_sal_avg ~ gender * rank + dept + clin + cert + prate + exper,
+    data = lawsuit,
+    method = "leapBackward",
+    tuneGrid = data.frame(nvmax = 1:15),
+    trControl = train_ctrl_cv10,
+    na.action = na.omit,
+    metric = "RMSE"
+)
+
+coefficients(back_step$finalModel, id = back_step$bestTune$nvmax)
+```
+
+
+
+
