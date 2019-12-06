@@ -73,6 +73,8 @@ lawsuit %>%
   ggplot(aes(y = sal_avg, x = gender, fill = rank)) + 
   geom_bar(stat = "identity", position = "dodge")
 ```
+For males being a full professor has a stronger effect than for females
+
 
 ```{r}
 library(caret)
@@ -87,12 +89,29 @@ back_step <- train(
     tuneGrid = data.frame(nvmax = 1:15),
     trControl = train_ctrl_cv10,
     na.action = na.omit,
-    metric = "RMSE"
+    metric = "Rsquared"
 )
 
 coefficients(back_step$finalModel, id = back_step$bestTune$nvmax)
 ```
 
+```{r}
+coefficients(back_step$finalModel, id = back_step$bestTune$nvmax)
+```
 
 
+```{r}
+lawsuit %>% 
+  ggplot(aes(x = sal_avg, fill = gender)) + 
+  geom_density(alpha = 0.5) + 
+  xlim(36594.5, 445859)
+```
+
+
+
+
+```{r}
+min(lawsuit$sal_avg)
+mean(lawsuit$sal_avg)
+```
 

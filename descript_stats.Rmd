@@ -49,7 +49,7 @@ data_tabl<- lawsuit %>%
 
 ```{r, results="asis", echo = FALSE}
 # tabulation by group
-tab1 <- tableby(~dept + gender + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
+tab1 <- tableby(gender ~dept + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
                 data=data_tabl, 
                 control = my_controls)
 summary(tab1, title = "Descriptive Statistics", 
