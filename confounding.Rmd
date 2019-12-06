@@ -46,17 +46,34 @@ inter_rank_mod = lm(ln_sal_avg ~ gender * rank, data = lawsuit)
 
 
 ```{r}
-summary(base_mod)
-summary(dept_mod)
-summary(clin_mod)
-summary(cert_mod)
-summary(prate_mod)
-summary(exper_mod)
-summary(rank_mod)
+(base_mod)
+(dept_mod)
+(clin_mod)
+(cert_mod)
+(prate_mod)
+(exper_mod)
+(rank_mod)
 ```
 All vars besides rank are confounders in that they exagerate relationship of interest when not being controlled for.  
 
 (check 10%)
+
+
+```{r}
+#dept
+(.3853- 0.2052)/.3853
+#clin
+(.3853- 0.3372)/.3853
+#cert
+(.3853- .3328)/.3853
+#prate
+(.3853- 0.3372)/.3853
+#exper
+(.3853- 0.30755)/.3853
+#rank
+(.3853- 0.349481)/.3853
+```
+
 
 ```{r}
 summary(inter_dept_mod)

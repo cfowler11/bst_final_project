@@ -55,3 +55,58 @@ tab1 <- tableby(gender ~dept + clin + cert + prate + exper + rank + sal94 + sal9
 summary(tab1, title = "Descriptive Statistics", 
         labelTranslations = my_labels, text=T) 
 ```
+
+```{r}
+lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery"), 
+    
+         )
+```
+
+
+
+```{r}
+spineplot(factor(lawsuit$gender)~factor(lawsuit$rank), col = c("light blue", "light green", "blue"), 
+          xlab = "Gender", ylab = "Rank")
+```
+```{r}
+d <- lawsuit %>%
+    count(gender, rank) %>%
+    mutate(total = sum(n), 
+           fraction = n / total)
+
+lab <- d %>%
+    #distinct(gender) %>%
+    select(gender, total) %>%
+    ungroup() %>%
+    mutate(position = .5 * (cumsum(total) + cumsum(lag(total, default = 0))))
+
+d %>%
+    inner_join(lab) %>%
+    ggplot(aes(position, fraction, fill = rank, width = total)) +
+    geom_bar(stat = "identity") +
+    scale_x_continuous(labels = lab$gender, breaks = lab$position) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    xlab("Manufacturer")
+```
+
+
+```{r}
+lawsuit %>% 
+  group_by(gender) %>% 
+  count(rank) %>% 
+  #group_by( gender)
+  mutate(prop = n/ sum(n)) %>% 
+  ggplot(aes(x = gender, y = prop, fill = rank)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "", y = "proportion")
+```
+
