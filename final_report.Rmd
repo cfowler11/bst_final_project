@@ -9,3 +9,67 @@ output: pdf_document
 library(tidyverse)
 ```
 
+```{r}
+lawsuit_full_prof =  read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  filter(rank == "full professor") %>% 
+  select(-c(sal94, sal95, rank, id, sal_avg))
+  
+
+
+
+lawsuit_associate =  read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  filter(rank == "associate") %>% 
+  select(-c(sal94, sal95, rank, id, sal_avg))
+
+
+lawsuit_assistant =  read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  filter(rank == "assistant") %>% 
+  select(-c(sal94, sal95, rank, id, sal_avg))
+```
+
+```{r}
+full_prof_mod = lm(ln_sal_avg ~ . - prate , lawsuit_full_prof)
+
+summary(full_prof_mod)
+```
+
+
+```{r}
+assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
+
+summary(assistant_mod)
+```
+
+
+```{r}
+associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
+
+summary(associate_mod)
+```
