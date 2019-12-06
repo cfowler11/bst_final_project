@@ -21,16 +21,28 @@ lawsuit_model = read_csv("./Lawsuit.csv") %>%
     cert = recode(cert, "0" = "not certified", "1" = "certified"), 
     rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
     dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
-  select(-c(sal94, sal95))
+  select(-c(sal94, sal95, id, sal_avg))
 ```
 
 ```{r}
-mod1 = lm(ln_sal_avg ~ ., lawsuit_model)
+# model with interaction 
+mod1 = lm(ln_sal_avg ~ . + rank*gender, lawsuit_model)
 summary(mod1)
 
-
-
-
+library(car)
 vif(mod1)
+
+
+# remove prate
+step1 = update(mod1, . ~ . -prate)
+summary(step1)
+vif(step1)
+
+# model without interaction 
+mod2 = lm(ln_sal_avg ~ . -prate, lawsuit_model)
+summary(mod2)
+vif(mod2)
+
+
 ```
 
