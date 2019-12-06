@@ -5,11 +5,14 @@ date: "12/6/2019"
 output: pdf_document
 ---
 
-```{r}
+```{r,message=FALSE}
 library(tidyverse)
+library(faraway)
+library(car)
+library(base)
 ```
 
-```{r}
+```{r, message=FALSE}
 lawsuit_full_prof =  read_csv("./Lawsuit.csv") %>% 
   janitor::clean_names() %>% 
   mutate(
@@ -58,18 +61,83 @@ lawsuit_assistant =  read_csv("./Lawsuit.csv") %>%
 full_prof_mod = lm(ln_sal_avg ~ . - prate , lawsuit_full_prof)
 
 summary(full_prof_mod)
+
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(full_prof_mod)
+
+shapiro.test(residuals(full_prof_mod))
+vif(full_prof_mod)
+
+rstandard(full_prof_mod)
+
+brand_hat =hatvalues(full_prof_mod)
+brand_hat[brand_hat > 0.24]
+
+# check influencial ponits
+
+which(cooks.distance(full_prof_mod) > 0.5)
+
 ```
 
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
 
 ```{r}
 assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
 
 summary(assistant_mod)
+
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(assistant_mod)
+
+shapiro.test(residuals(assistant_mod))
+
+vif(assistant_mod)
+
+rstandard(assistant_mod)
+
+brand_hat =hatvalues(assistant_mod)
+brand_hat[brand_hat > 0.18]
+
+# check influencial ponits
+which(cooks.distance(assistant_mod) > 0.5)
+
+
+lawsuit_assistant1 = lawsuit_assistant [-c(68),]
+assistant_mod1 = lm(ln_sal_avg ~ . - prate , lawsuit_assistant1)
+summary(assistant_mod1)
+
 ```
 
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
+
+
+Observation 68 is an influencial point, after removing this point adj r2 increase from 90% to 93%. The coefficients of department of medicine, pediatrics, gender male and clinical research change more than 10%.
 
 ```{r}
 associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
 
 summary(associate_mod)
+
+## Model diagnosis
+par(mfrow=c(2,2))
+plot(associate_mod)
+
+shapiro.test(residuals(associate_mod))
+vif(associate_mod)
+
+rstandard(associate_mod)
+
+brand_hat =hatvalues(associate_mod)
+brand_hat[brand_hat > 0.3125]
+
+# check influencial ponits
+which(cooks.distance(associate_mod) > 0.5)
+
 ```
+
+The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
+collinearity. 
