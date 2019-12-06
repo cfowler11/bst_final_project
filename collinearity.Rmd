@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(corrplot)
 library(ggplot2)
+library(GGally)
 ```
 
 ```{r, message=FALSE}
@@ -32,19 +33,29 @@ round(res, 2)
 col<- colorRampPalette(c("blue", "white", "red"))(20)
 heatmap(x = res, col = col, symm = TRUE)
 
+lawsuit_cor$dept = as.factor(lawsuit_cor$dept)
+lawsuit_cor$gender = as.factor(lawsuit_cor$gender)
+lawsuit_cor$clin = as.factor(lawsuit_cor$clin)
+lawsuit_cor$cert = as.factor(lawsuit_cor$cert)
+lawsuit_cor$rank = as.factor(lawsuit_cor$rank)
+lawsuit_cor$sal_avg = as.factor(lawsuit_cor$sal_avg)
 
-library(GGally)
+
 lawsuit_cor%>% 
   GGally::ggpairs(
     columns = c("dept", "clin", "rank", "cert", "prate", "exper"),
     lower = list(
-      continous = "smooth", 
+      continuous = "smooth", 
       combo = "box",
-      mapping = aes(color = gender),
-      upper = "blank"
-    )
+      mapping = aes(color = gender)
+    ),
+    upper = "blank"
   )
 ```
+
+
+
+
 
 There may be a collinearity issue where we can see from the plot above. 
 
@@ -53,6 +64,3 @@ There may be a collinearity issue where we can see from the plot above.
 `clin` is highly correlated with`dept`.
 
 `rank` is highly correlated with `exper`.
-
-
-
