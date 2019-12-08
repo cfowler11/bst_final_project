@@ -12,10 +12,6 @@ library(faraway)
 library(base)
 ```
 
-
-
-
-
 ```{r, message=FALSE}
 lawsuit_full_prof =  read_csv("./Lawsuit.csv") %>% 
   janitor::clean_names() %>% 
@@ -62,6 +58,7 @@ lawsuit_assistant =  read_csv("./Lawsuit.csv") %>%
 ```
 
 ```{r}
+#lawsuit_full_prof =  read_csv("./lawsuit_full_prof.csv")
 full_prof_mod_prate = lm(ln_sal_avg ~ ., lawsuit_full_prof)
 vif(full_prof_mod_prate)
 
@@ -92,6 +89,7 @@ The residual has constant variance and the the residuals are normally distribute
 collinearity. 
 
 ```{r}
+#lawsuit_assistant =  read_csv("./lawsuit_assistant.csv")
 assistant_mod_prate = lm(ln_sal_avg ~ ., lawsuit_assistant)
 vif(assistant_mod_prate)
 
@@ -132,6 +130,7 @@ collinearity.
 Observation 68 is an influencial point, after removing this point adj r2 increase from 90% to 93%. The coefficients of department of medicine, pediatrics, gender male and clinical research change more than 10%.
 
 ```{r}
+#lawsuit_associate =  read_csv("./lawsuit_associate.csv")
 associate_mod_prate = lm(ln_sal_avg ~ ., lawsuit_associate)
 vif(associate_mod_prate)
 
@@ -158,3 +157,12 @@ which(cooks.distance(associate_mod) > 0.5)
 
 The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
 collinearity. 
+
+```{r, message=FALSE}
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+tab_model(full_prof_mod, associate_mod, assistant_mod1, title = "Modeling by Stratify", dv.labels = c("Ln avg_salary for Full Professor", "Ln avg_salary for Associate Professor", "Ln avg_salary for Assistant Professor" ))
+```
+
