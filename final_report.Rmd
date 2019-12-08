@@ -153,7 +153,6 @@ brand_hat[brand_hat > 0.3125]
 
 # check influencial ponits
 which(cooks.distance(associate_mod) > 0.5)
-
 ```
 
 The residual has constant variance and the the residuals are normally distributed. Since the VIF is less than 5, we do not have issue with multi
