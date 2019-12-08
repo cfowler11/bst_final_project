@@ -54,7 +54,6 @@ which(cooks.distance(full_model_no_prate) > 0.5) #no influential points
 #DFFTIS
 influence.measures(full_model_no_prate)
 
-  
 ```
 
 
@@ -66,22 +65,33 @@ lawsuit_model_new = lawsuit_model %>%
 
 trying full model without point
 ```{r}
-full_model_no_prate = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
-summary(full_model_no_prate)
+full_model_no_prate_inter = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
+summary(full_model_no_prate_inter)
 ```
+
 gender not significant, is rank still effect modifier? 
 
 ```{r}
-full_model_no_prate = lm(ln_sal_avg ~ gender + rank , lawsuit_model_new)
-summary(full_model_no_prate)
+full_model_rank = lm(ln_sal_avg ~ gender + rank , lawsuit_model_new)
+summary(full_model_rank)
 ```
 yes, still effect modifier 
 
 model without interaction 
 ```{r}
-full_model_no_prate = lm(ln_sal_avg ~  . - prate- id , lawsuit_model_new)
-summary(full_model_no_prate)
+full_model_no_inter = lm(ln_sal_avg ~  . - prate- id , lawsuit_model_new)
+summary(full_model_no_inter)
 ```
+
+add table 
+```{r}
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+tab_model(full_model_no_prate_inter, full_model_no_inter, dv.labels = c("Ln avg_salary with interaction no prate ", "Ln avg_salary without interaction and no rank"))
+```
+
 
 stratifying 
 ```{r}
@@ -114,6 +124,8 @@ full_prof_new = lawsuit_model_new %>%
 full_model = lm(ln_sal_avg ~ . -id  - prate, data = full_prof_new)
 
 summary(full_model)
+
+tab_model(full_model, assos_model, assis_model, title = "Modeling by Stratify", dv.labels = c("Ln avg_salary for Full Professor", "Ln avg_salary for Associate Professor", "Ln avg_salary for Assistant Professor" ))
 ```
 
 
@@ -137,3 +149,5 @@ summary(x)
 position is gender based
 
 all changes in salary are related to position 
+
+
