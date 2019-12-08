@@ -57,6 +57,7 @@ lawsuit_cor%>%
 
 
 
+
 There may be a collinearity issue where we can see from the plot above. 
 
 `prate` is highly correlated with `dept` and `clin`. 

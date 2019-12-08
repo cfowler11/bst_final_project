@@ -38,8 +38,7 @@ ln_dens = lawsuit %>%
   geom_histogram(alpha = .6, color = "black")
 
 reg_dense + ln_dens
-
-shapiro.test(lawsuit$sal_avg) 
+ 
 ```
 
 
