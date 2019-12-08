@@ -8,7 +8,7 @@ output: pdf_document
 ```{r,message=FALSE}
 library(tidyverse)
 library(faraway)
-library(car)
+#library(car)
 library(base)
 ```
 
