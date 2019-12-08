@@ -1,12 +1,15 @@
 ---
-title: "final_project_code"
-author: "Charlotte Fowler"
-date: "12/8/2019"
-output: html_document
+title: "Appendix"
+
+output: pdf_document
 ---
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  echo = TRUE)
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE)
 
 
 
@@ -28,6 +31,8 @@ lawsuit_base = read_csv("./Lawsuit.csv") %>%
   janitor::clean_names() %>% 
   mutate(sal_avg = (sal94 + sal95)/2)
 ```
+
+### Table 1: Descriptive Statistics
 
 ```{r, results="asis"}
 #descriptive table
@@ -58,19 +63,11 @@ data_tabl<- lawsuit_base %>%
 tab1 <- tableby(gender ~dept + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
                 data=data_tabl, 
                 control = my_controls)
-summary(tab1, title = "Descriptive Statistics", 
+summary(tab1, 
         labelTranslations = my_labels, text=T) 
 ```
 
-```{r}
-#correlation plot 
 
-
-lawsuit_cor = lawsuit_base %>% 
-  select(-id, - sal94, -sal95)
-cor(lawsuit_cor) %>%                            
-  corrplot(method = "circle", type = "upper", diag=FALSE, title ="")
-```
 
 
 
@@ -90,6 +87,9 @@ lawsuit = read_csv("./Lawsuit.csv") %>%
          )
 ```
 
+
+
+### Figure 1: Salary by Gender
 ```{r}
 #######descriptive plots########## 
 #salary and gender
@@ -97,86 +97,48 @@ lawsuit %>%
   mutate(gender = recode(gender, "0" = "female", "1" = "male")) %>% 
   ggplot(aes(y = sal_avg, x = gender)) + 
   geom_boxplot() + 
-  labs(title = "Salary by Gender" , y = "salary", x = "")
+  labs( y = "salary", x = "")
+```
 
+
+### Figure 2: Salary by Gender
+```{r}
 #salary and experience
 lawsuit %>% 
   ggplot(aes(y = sal_avg, x = exper)) + 
   geom_point() + 
-  labs(title = "Salary by Experience", y = "salary", x = "experience (yrs)")
-
-
+  labs(y = "salary", x = "experience (yrs)")
 ```
 
 
+### Figure 3: Correlation Plot
+```{r}
+#correlation plot 
+lawsuit_cor = lawsuit_base %>% 
+  select(-id, - sal94, -sal95)
+cor(lawsuit_cor) %>%                            
+  corrplot(method = "circle", type = "upper", diag=FALSE)
+```
 
+
+### Figure 4: Salary Histogram
 ```{r}
 #histograms of response var
 library(patchwork)
 reg_dense = lawsuit %>% 
   ggplot(aes(x = sal_avg)) + 
   geom_histogram(alpha = .6, color = "black") + 
-  labs(x = "salary", y = "count", title = "Salary Histogram")
+  labs(x = "salary", y = "count", title = "")
 
 ln_dens = lawsuit %>% 
   ggplot(aes(x = ln_sal_avg)) + 
   geom_histogram(alpha = .6, color = "black") + 
-  labs(x = "ln(salary)", y = "", title = "Transformed Histogram")
+  labs(x = "ln(salary)", y = "", title = "")
 
 reg_dense + ln_dens
 ```
 
-```{r}
-#####looking for confounding #######
 
-#building models
-base_mod = lm(ln_sal_avg ~ gender, data = lawsuit)
-dept_mod = lm(ln_sal_avg ~ gender + dept, data = lawsuit)
-clin_mod = lm(ln_sal_avg ~ gender + clin, data = lawsuit)
-cert_mod = lm(ln_sal_avg ~ gender + cert, data = lawsuit)
-prate_mod = lm(ln_sal_avg ~ gender + prate, data = lawsuit)
-exper_mod = lm(ln_sal_avg ~ gender + exper, data = lawsuit)
-rank_mod = lm(ln_sal_avg ~ gender + rank, data = lawsuit)
-
-#checking coefficients and p-values
-summary(base_mod)
-summary(dept_mod)
-summary(clin_mod)
-summary(cert_mod)
-summary(prate_mod)
-summary(rank_mod)
-
-#calculating percent difference 
-#dept
-(.3853- 0.2052)/.3853
-#clin
-(.3853- 0.3372)/.3853
-#cert
-(.3853- .3328)/.3853
-#prate
-(.3853- 0.3372)/.3853
-#exper
-(.3853- 0.30755)/.3853
-#rank
-(.3853- 0.349481)/.3853
-```
-
-```{r}
-#looking for modifiers 
-inter_dept_mod = lm(ln_sal_avg ~ gender * dept, data = lawsuit)
-inter_clin_mod = lm(ln_sal_avg ~ gender * clin, data = lawsuit)
-inter_cert_mod = lm(ln_sal_avg ~ gender * cert, data = lawsuit)
-inter_prate_mod = lm(ln_sal_avg ~ gender * prate, data = lawsuit)
-inter_exper_mod = lm(ln_sal_avg ~ gender * exper, data = lawsuit)
-inter_rank_mod = lm(ln_sal_avg ~ gender * rank, data = lawsuit)
-
-summary(inter_dept_mod)
-summary(inter_clin_mod)
-summary(inter_cert_mod)
-summary(inter_prate_mod)
-summary(inter_exper_mod)
-summary(inter_rank_mod)
-```
 
 ```{r}
 #data for model 
@@ -194,41 +156,24 @@ lawsuit_model = read_csv("./Lawsuit.csv") %>%
 
 #full model 
 full_model = lm(ln_sal_avg ~ gender * rank + . - id, lawsuit_model)
-summary(full_model)
 ```
 
-```{r}
-#vif calc 
-car::vif(full_model)
 
+### Figure 6: Diagnostic Plots
+```{r}
 #no prate model 
 full_model_no_prate = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model)
-summary(full_model_no_prate)
-
-car::vif(full_model_no_prate)
-```
 
 
-```{r}
 #model diagnostics
+
 par(mfrow=c(2,2))
 plot(full_model_no_prate)
-shapiro.test(residuals(full_model_no_prate))
+
+
 ```
 
-```{r}
-#colinearity
-car::vif(full_model_no_prate)
 
-#outliers
-rstandard(full_model_no_prate) #184 violates with 6.780976838
-
-brand_hat =hatvalues(full_model_no_prate)
-brand_hat[brand_hat > 28/nrow(lawsuit_model)] #none greater than 0.5, 7 over 2p/n threshold
-
-# check influencial ponits
-which(cooks.distance(full_model_no_prate) > 0.5) #no influential points
-```
 
 ```{r}
 #remove point 184
@@ -239,53 +184,20 @@ lawsuit_model_new = lawsuit_model %>%
 ```{r}
 #new full model without point 
 full_model_no_prate_inter = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
-summary(full_model_no_prate_inter)
+
 ```
 
 ```{r}
 # full model minus rank
 full_model_no_inter = lm(ln_sal_avg ~  . - prate- id - rank, lawsuit_model_new)
-summary(full_model_no_inter)
+
 ```
 
-```{r}
-#add table
-library(sjPlot)
-library(sjmisc)
-library(sjlabelled)
+### Table 2: Main Models
 
-tab_model(full_model_no_prate_inter, full_model_no_inter, dv.labels = c("Ln salary with interaction no prate ", "Ln salary without interaction and no rank"))
-```
+![](table4.png)
+
+### Table 3: Stratified Models
 
 
-```{r}
-########stratified analysis##########
-#assistant
-assis_prof_new = lawsuit_model_new %>% 
-  filter(rank == "assistant") %>% 
-  select(-rank)
-
-assis_model = lm(ln_sal_avg ~ . -id  - prate, data = assis_prof_new)
-
-summary(assis_model)
-
-#associate
-assoc_prof_new = lawsuit_model_new %>% 
-  filter(rank == "associate") %>% 
-  select(-rank)
-
-assos_model = lm(ln_sal_avg ~ . -id  - prate, data = assoc_prof_new)
-
-summary(assos_model)
-
-#full
-full_prof_new = lawsuit_model_new %>% 
-  filter(rank == "full professor") %>% 
-  select(-rank)
-
-full_model = lm(ln_sal_avg ~ . -id  - prate, data = full_prof_new)
-
-summary(full_model)
-
-tab_model(full_model, assos_model, assis_model, dv.labels = c("Ln salary for Full Professor", "Ln salary for Associate Professor", "Ln salary for Assistant Professor" ))
-```
+![](table5.png)
