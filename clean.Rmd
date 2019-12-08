@@ -79,7 +79,7 @@ yes, still effect modifier
 
 model without interaction 
 ```{r}
-full_model_no_inter = lm(ln_sal_avg ~  . - prate- id , lawsuit_model_new)
+full_model_no_inter = lm(ln_sal_avg ~  . - prate- id - rank, lawsuit_model_new)
 summary(full_model_no_inter)
 ```
 
