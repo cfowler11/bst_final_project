@@ -2,6 +2,9 @@
 title: "Final Report"
 output: pdf_document
 fontsize: 11pt
+header-includes:
+   - \usepackage{setspace, indentfirst}
+   - \doublespacing
 indent: true
 ---
 ```{r, echo = FALSE, message=FALSE}
@@ -50,12 +53,10 @@ Although through formal tests of influence points, it seems like there are no po
 We therefore obtain two models to understand how gender affects salary of professors.
 
 The first model includes the interaction term, gender*rank and all other predictors except prate.  
-$$Salary = exp(11.38 + 0.046 I(gender = male) + 0.167 I (rank = associate) + 0.274 I (rank = full) + 0.180 I(dept = genetics) + 0.516 I(dept = medicine) +0.190 I(dept = pediatrics)  - 0.181 I(dept = physiology) + 0.915 I(dept = surgery) - 0.218 I (clin = research) - 0.207 I(cert = not certified) + 0.019 exper - 0.050 I(gender = male, rank = associate) -0.077 I(gender  = male, rank = full )$$ 
 
 In this model, gender and the interaction term are not statistically significant at a significance level of 0.05, which indicates that gender is not associated with salary when we have accounted for the modification by rank and all confounders. Our model suggests that the salary of a male assistant professor is 1.04 times greater than that of a female assistant professor, controlling for all confounders. Meanwhile, the salary of a male associate professor is 0.996 times less and of a male full professor is 0.96 times less than their female counterparts. As stated, none of these coefficients were significant, holding all confounders constant. 
 
 The next multiple regression model excludes the interaction term and rank and is expressed as: 
-$$Salary= exp(11.39 + 0.057 I(gender = male)   + 0.181 I(dept = genetics) + 0.498 I(dept = medicine) +0.182 I(dept = pediatrics)  - 0.166 I(dept = physiology) + 0.887 I(dept = surgery)  - 0.225 I (clinresearch) - 0.197 I(cert = not certified) + 0.027 exper))$$
 
 In this model, gender is statistically significant at a significance level of 0.05, which indicates there is a difference in average salary between male and female. Here, the salary of male faculty is 1.06 times that of female faculty, accounting for confounders. We include this model to better understand the modification between gender and salary by rank. We can see that gender is a significant predictor of salary, yet this relationship is entirely manifested in the faculty’s position as an assistant, associate, or full professor. 
 
@@ -64,5 +65,12 @@ Lastly, in (additional materials) we stratified our main model into three models
 # Conclusion
 
 Our analysis shows that gender is not a significant indicator of salary after accounting for the interaction of rank and gender, and predictors department, clin (clinical or research emphasis ), cert(Board certified), experience (years since obtaining MD). Using an alpha level of 0.05, we found gender was only significant without the presence of rank in our model (model 2), but in our main model (model 1) we find that when rank and the interaction between rank and gender is accounted for, along with all other predictors besides prate, this significance disappears. This implies that while females earn significantly less than men, this association is entirely due to their positions, promotions, and lack thereof. A female who is equally qualified in terms of experience, research, department, and certification is much more likely to be an associate or assistant professor, and therefore to be paid less. However, were females to be placed in the same positions as men, these discrepancies in salary would disappear. Therefore, the female faculty of Houston College of Medicine were correct to object to the discrepancies in salary and position across gender. 
+
+# References : 
+1. Reese, Catherine C., and Barbara Warner. “Pay Equity in the States: An Analysis of the Gender–Pay Gap in the Public Sector.” Review of Public Personnel Administration, vol. 32, no. 4, Dec. 2012, pp. 312–331, doi:10.1177/0734371X11428616.
+
+2. Ginther, Donna K. “Is MIT an Exception? Gender Pay Differences in Academic Science.” Bulletin of Science, Technology & Society, vol. 23, no. 1, 2003, pp. 21–26., doi:10.1177/0270467602239767.
+
+3. Jagsi, Reshma, et al. “Gender Differences in the Salaries of Physician Researchers.” Jama, vol. 307, no. 22, 2012, doi:10.1001/jama.2012.6183.
 
 
