@@ -1,0 +1,86 @@
+"","dept","gender","clin","cert","prate","exper","ln_sal_avg"
+"1","biochemistry","male","research","not certified",7.4,9,11.3049660489811
+"2","biochemistry","male","clinical","certified",5.1,27,12.0088891958855
+"3","biochemistry","male","research","not certified",7,10,11.4369457421837
+"4","biochemistry","male","research","certified",7.7,10,11.3340679016174
+"5","biochemistry","male","clinical","certified",5.3,11,11.9767349500526
+"6","biochemistry","male","research","not certified",7.7,18,11.3308518774294
+"7","biochemistry","male","clinical","certified",5.4,18,11.8717461052552
+"8","biochemistry","male","research","not certified",8.1,9,11.3678823517292
+"9","biochemistry","male","research","not certified",7.3,16,11.4721347199617
+"10","biochemistry","male","research","certified",7.7,9,11.6231556047393
+"11","biochemistry","male","research","certified",7.2,14,11.6851167163832
+"12","biochemistry","male","research","certified",8.6,27,12.0020666719844
+"13","biochemistry","male","research","not certified",7.1,14,11.5188777151296
+"14","biochemistry","male","research","certified",7.3,17,11.8409982389488
+"15","biochemistry","male","research","certified",6.9,23,11.8705020023514
+"16","biochemistry","male","research","certified",7.4,8,11.4634883415678
+"17","biochemistry","male","research","certified",6.9,19,11.5599283185656
+"18","biochemistry","male","research","certified",7,16,11.6459998781956
+"19","biochemistry","male","research","certified",6.9,15,11.6526134915702
+"20","biochemistry","female","research","not certified",7.9,16,11.6234421646346
+"21","biochemistry","female","clinical","certified",6.4,16,11.9078620084136
+"22","biochemistry","female","research","not certified",8,12,11.4809083435366
+"23","physiology","male","clinical","certified",5.1,9,11.627984794705
+"24","physiology","male","research","certified",6.8,8,11.3477795585764
+"25","physiology","male","clinical","certified",5.5,25,11.8880172725565
+"26","physiology","male","research","certified",7.1,11,11.3932969775147
+"27","physiology","male","clinical","certified",6.1,27,11.8658930451206
+"28","physiology","male","research","not certified",8.3,23,11.2238290594875
+"29","physiology","male","research","certified",7.8,11,11.6261782545401
+"30","physiology","male","research","not certified",7.5,9,11.4290274183524
+"31","physiology","male","research","certified",7.5,12,11.658033958599
+"32","physiology","male","clinical","certified",5.7,18,11.9050925449344
+"33","physiology","male","clinical","certified",6,19,11.7641587788503
+"34","physiology","male","research","not certified",7.1,10,11.1834417516347
+"35","physiology","male","research","certified",7.6,14,11.5809812308442
+"36","physiology","female","research","certified",7.9,14,11.7396665374383
+"37","physiology","female","clinical","not certified",5.5,9,11.334462454403
+"38","physiology","female","clinical","not certified",5.3,12,11.3343907291108
+"39","physiology","female","clinical","not certified",6.1,11,11.4820538013031
+"40","genetics","male","research","certified",6.7,24,11.9835851289781
+"41","genetics","male","clinical","not certified",4.8,16,11.7313298039372
+"42","genetics","male","clinical","certified",4.3,11,12.1222045052104
+"43","genetics","male","clinical","certified",4.3,16,12.2444733109978
+"44","genetics","male","clinical","certified",4.3,16,12.1907990964578
+"45","genetics","female","clinical","not certified",3.9,9,11.8984599375895
+"46","genetics","female","clinical","not certified",5,10,11.7278876399083
+"47","pediatrics","male","research","certified",5.2,17,11.9933434263148
+"48","pediatrics","male","research","certified",4.8,10,11.6937125116722
+"49","pediatrics","female","clinical","certified",3.6,16,12.0358565214309
+"50","pediatrics","female","clinical","certified",3.1,14,12.0927751597365
+"51","medicine","male","research","certified",5.6,11,11.9284696085201
+"52","medicine","male","clinical","certified",3.1,18,12.4533916025356
+"53","medicine","male","research","certified",5.2,12,12.0713977422036
+"54","medicine","male","clinical","certified",4,14,12.2896667318943
+"55","medicine","male","clinical","certified",3.1,10,12.2979040541478
+"56","medicine","male","clinical","certified",4.5,15,12.3953656783492
+"57","medicine","male","research","not certified",5.7,15,12.0928591535882
+"58","medicine","male","clinical","certified",3.7,13,12.5822771402674
+"59","medicine","male","clinical","certified",3.6,8,12.2551651449441
+"60","medicine","male","clinical","certified",3.1,22,12.5091228952691
+"61","medicine","male","clinical","certified",3.1,18,12.516259573322
+"62","medicine","male","clinical","certified",3.4,37,12.6652270087516
+"63","medicine","male","research","not certified",5.1,8,11.817317150985
+"64","medicine","male","clinical","certified",3.5,25,12.4799435311067
+"65","medicine","male","research","certified",4.7,21,12.5597408236757
+"66","medicine","male","clinical","certified",4,18,12.5279169856683
+"67","medicine","male","clinical","not certified",3.6,26,12.3540033068013
+"68","medicine","male","clinical","certified",3.3,16,12.2549223317377
+"69","medicine","male","clinical","certified",3,15,12.3508069876188
+"70","medicine","female","clinical","certified",3.6,14,12.4631170151865
+"71","medicine","female","clinical","certified",3.1,13,12.6022581644543
+"72","medicine","female","research","certified",5.8,23,12.2831933961343
+"73","medicine","female","clinical","certified",4.5,8,12.1880995935399
+"74","surgery","male","clinical","certified",2.1,16,12.7033463555225
+"75","surgery","male","clinical","certified",2.5,13,12.7107841158962
+"76","surgery","male","clinical","certified",2.4,21,12.7832111528213
+"77","surgery","male","clinical","certified",3.2,11,12.803174125857
+"78","surgery","male","clinical","certified",2.4,22,12.9348041278141
+"79","surgery","male","clinical","certified",2.4,27,13.0077580375206
+"80","surgery","male","clinical","certified",2.7,12,13.0071971648778
+"81","surgery","male","clinical","certified",3.2,10,12.8675330613415
+"82","surgery","male","clinical","certified",2.3,8,12.6748552170883
+"83","surgery","male","clinical","certified",3.2,25,12.9792859950269
+"84","surgery","male","clinical","certified",2.7,10,12.7361993002257
+"85","surgery","female","clinical","certified",2.6,9,12.6881051988072

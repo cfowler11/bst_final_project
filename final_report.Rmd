@@ -58,6 +58,10 @@ lawsuit_assistant =  read_csv("./Lawsuit.csv") %>%
 ```
 
 ```{r}
+full_prof_mod_prate = lm(ln_sal_avg ~ ., lawsuit_full_prof)
+vif(full_prof_mod_prate)
+
+
 full_prof_mod = lm(ln_sal_avg ~ . - prate , lawsuit_full_prof)
 
 summary(full_prof_mod)
@@ -84,7 +88,13 @@ The residual has constant variance and the the residuals are normally distribute
 collinearity. 
 
 ```{r}
+assistant_mod_prate = lm(ln_sal_avg ~ ., lawsuit_assistant)
+vif(assistant_mod_prate)
+
+# remove prate
 assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
+
+
 
 summary(assistant_mod)
 
@@ -118,6 +128,10 @@ collinearity.
 Observation 68 is an influencial point, after removing this point adj r2 increase from 90% to 93%. The coefficients of department of medicine, pediatrics, gender male and clinical research change more than 10%.
 
 ```{r}
+associate_mod_prate = lm(ln_sal_avg ~ ., lawsuit_associate)
+vif(associate_mod_prate)
+
+# remove prate
 associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
 
 summary(associate_mod)
