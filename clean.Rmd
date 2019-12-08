@@ -1,0 +1,139 @@
+---
+title: "clean"
+author: "Charlotte Fowler"
+date: "12/8/2019"
+output: html_document
+---
+
+```{r}
+lawsuit_model = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  select(-c(sal94, sal95, sal_avg))
+```
+
+```{r}
+full_model = lm(ln_sal_avg ~ gender * rank + . - id, lawsuit_model)
+summary(full_model)
+```
+fit full model (with interaction), VIF  says remove prate
+
+
+```{r}
+full_model_no_prate = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model)
+summary(full_model_no_prate)
+```
+
+
+
+
+```{r}
+#looking for influential points! 
+
+par(mfrow=c(2,2))
+plot(full_model_no_prate)
+
+shapiro.test(residuals(full_model_no_prate))
+vif(full_model_no_prate)
+
+rstandard(full_model_no_prate) #184 violates with 6.780976838
+
+brand_hat =hatvalues(full_model_no_prate)
+brand_hat[brand_hat > 28/nrow(lawsuit_model)] #none greater than 0.5, 7 over 2p/n threshold
+
+# check influencial ponits
+which(cooks.distance(full_model_no_prate) > 0.5) #no influential points
+
+#DFFTIS
+influence.measures(full_model_no_prate)
+
+  
+```
+
+
+Removing point 184 
+```{r}
+lawsuit_model_new = lawsuit_model %>% 
+  filter(id != 184)
+```
+
+trying full model without point
+```{r}
+full_model_no_prate = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
+summary(full_model_no_prate)
+```
+gender not significant, is rank still effect modifier? 
+
+```{r}
+full_model_no_prate = lm(ln_sal_avg ~ gender + rank , lawsuit_model_new)
+summary(full_model_no_prate)
+```
+yes, still effect modifier 
+
+model without interaction 
+```{r}
+full_model_no_prate = lm(ln_sal_avg ~  . - prate- id , lawsuit_model_new)
+summary(full_model_no_prate)
+```
+
+stratifying 
+```{r}
+#assistant
+assis_prof_new = lawsuit_model_new %>% 
+  filter(rank == "assistant") %>% 
+  select(-rank)
+
+
+assis_model = lm(ln_sal_avg ~ . -id  - prate, data = assis_prof_new)
+
+summary(assis_model)
+
+#associate
+assoc_prof_new = lawsuit_model_new %>% 
+  filter(rank == "associate") %>% 
+  select(-rank)
+
+
+assos_model = lm(ln_sal_avg ~ . -id  - prate, data = assoc_prof_new)
+
+summary(assos_model)
+
+#full
+full_prof_new = lawsuit_model_new %>% 
+  filter(rank == "full professor") %>% 
+  select(-rank)
+
+
+full_model = lm(ln_sal_avg ~ . -id  - prate, data = full_prof_new)
+
+summary(full_model)
+```
+
+
+```{r}
+try = lawsuit_model = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+ #   gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  select(-c(sal94, sal95)) %>% 
+  filter(id != 184)
+
+x = glm(gender ~ rank + rank * sal_avg + clin + cert + dept + exper, data = try)
+summary(x)
+```
+position is gender based
+
+all changes in salary are related to position 

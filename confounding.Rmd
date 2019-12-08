@@ -187,7 +187,7 @@ summary(full_prof_mod)
 
 
 ```{r}
-assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant)
+assistant_mod = lm(ln_sal_avg ~ . - prate , lawsuit_assistant[-68,])
 
 summary(assistant_mod)
 ```
@@ -198,3 +198,26 @@ associate_mod = lm(ln_sal_avg ~ . - prate , lawsuit_associate)
 
 summary(associate_mod)
 ```
+
+
+```{r}
+mod = lm(ln_sal_avg~ gender * rank + . -prate-id-sal94-sal95- sal_avg, data = lawsuit[-68,])
+summary(mod)
+```
+```{r}
+full = lawsuit %>% 
+  filter(id != 182)
+
+
+mod_full = lm(ln_sal_avg~ gender * rank + clin + exper + dept + cert, data = full)
+summary(mod_full)
+```
+```{r}
+full %>% 
+  ggplot(aes(x = ln_sal_avg)) + 
+  geom_histogram()
+```
+
+
+
+. - rank - prate-id-sal94-sal95- sal_avg

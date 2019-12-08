@@ -28,9 +28,18 @@ lawsuit %>%
   geom_histogram()
 ```
 ```{r}
-lawsuit %>% 
+library(patchwork)
+reg_dense = lawsuit %>% 
+  ggplot(aes(x = sal_avg)) + 
+  geom_histogram(alpha = .6, color = "black")
+
+ln_dens = lawsuit %>% 
   ggplot(aes(x = ln_sal_avg)) + 
-  geom_density()
+  geom_histogram(alpha = .6, color = "black")
+
+reg_dense + ln_dens
+
+shapiro.test(lawsuit$sal_avg) 
 ```
 
 
