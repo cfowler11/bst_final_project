@@ -8,13 +8,15 @@ output: html_document
 knitr::opts_chunk$set(
   echo = TRUE)
 
-theme_set(theme_minimal())
+
 
 #loading packages
 library(arsenal)
 library(tidyverse)
 library(corrplot)
 library(GGally)
+
+theme_set(theme_minimal())
 ```
 
 
@@ -22,6 +24,7 @@ library(GGally)
 ```{r}
 #reading in data
 lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
   mutate(sal_avg = (sal94 + sal95)/2)
 ```
 
@@ -58,6 +61,17 @@ summary(tab1, title = "Descriptive Statistics",
         labelTranslations = my_labels, text=T) 
 ```
 
+```{r}
+#correlation plot 
+
+
+lawsuit_cor = lawsuit %>% 
+  select(-id, - sal94, -sal95)
+cor(lawsuit_cor) %>%                            
+  corrplot(method = "circle", type = "upper", diag=FALSE, title ="")
+```
+
+
 
 ```{r}
 #cleaning data
@@ -90,13 +104,7 @@ lawsuit %>%
   geom_point() + 
   labs(title = "Salary by Experience", y = "salary", x = "experience (yrs)")
 
-#correlation plot 
 
-
-lawsuit_cor = lawsuit %>% 
-  select(-id, - sal94, -sal95)
-cor(lawsuit_cor) %>%                            
-  corrplot(method = "circle", type = "upper", diag=FALSE, title = "")
 ```
 
 
@@ -200,4 +208,83 @@ vif(full_model_no_prate)
 ```
 
 
+```{r}
+#model diagnostics
+par(mfrow=c(2,2))
+plot(full_model_no_prate)
+shapiro.test(residuals(full_model_no_prate))
+```
 
+```{r}
+#colinearity
+vif(full_model_no_prate)
+
+#outliers
+rstandard(full_model_no_prate) #184 violates with 6.780976838
+
+brand_hat =hatvalues(full_model_no_prate)
+brand_hat[brand_hat > 28/nrow(lawsuit_model)] #none greater than 0.5, 7 over 2p/n threshold
+
+# check influencial ponits
+which(cooks.distance(full_model_no_prate) > 0.5) #no influential points
+```
+
+```{r}
+#remove point 184
+lawsuit_model_new = lawsuit_model %>% 
+  filter(id != 184)
+```
+
+```{r}
+#new full model without point 
+full_model_no_prate_inter = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
+summary(full_model_no_prate_inter)
+```
+
+```{r}
+# full model minus rank
+full_model_no_inter = lm(ln_sal_avg ~  . - prate- id - rank, lawsuit_model_new)
+summary(full_model_no_inter)
+```
+
+```{r}
+#add table
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+tab_model(full_model_no_prate_inter, full_model_no_inter, dv.labels = c("Ln avg_salary with interaction no prate ", "Ln avg_salary without interaction and no rank"))
+```
+
+
+```{r}
+########stratified analysis##########
+#assistant
+assis_prof_new = lawsuit_model_new %>% 
+  filter(rank == "assistant") %>% 
+  select(-rank)
+
+assis_model = lm(ln_sal_avg ~ . -id  - prate, data = assis_prof_new)
+
+summary(assis_model)
+
+#associate
+assoc_prof_new = lawsuit_model_new %>% 
+  filter(rank == "associate") %>% 
+  select(-rank)
+
+assos_model = lm(ln_sal_avg ~ . -id  - prate, data = assoc_prof_new)
+
+summary(assos_model)
+
+#full
+full_prof_new = lawsuit_model_new %>% 
+  filter(rank == "full professor") %>% 
+  select(-rank)
+
+full_model = lm(ln_sal_avg ~ . -id  - prate, data = full_prof_new)
+
+summary(full_model)
+
+tab_model(full_model, assos_model, assis_model, title = "Modeling by Stratify", dv.labels = c("Ln avg_salary for Full Professor", "Ln avg_salary for Associate Professor", "Ln avg_salary for Assistant Professor" ))
+```
