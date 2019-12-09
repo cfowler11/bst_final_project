@@ -1,6 +1,8 @@
 ---
 title: "Final Report"
 output: pdf_document
+author: "Charlotte R. Fowler(crf2147) Yingxi Ji(yj2579) Qi Lu(ql2370) Rebecca Silva(rs4025)"
+date: "12/16/2019"
 fontsize: 11pt
 header-includes:
    - \usepackage{setspace, indentfirst}
