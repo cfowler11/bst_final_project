@@ -7,10 +7,26 @@ header-includes:
    - \doublespacing
 indent: true
 ---
-```{r, echo = FALSE, message=FALSE}
+```{r, echo = FALSE, message=FALSE, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE)
+
+
+
+#loading packages
+library(arsenal)
 library(tidyverse)
+library(corrplot)
+library(GGally)
+
+
+theme_set(theme_minimal())
+
 #reading in data
-lawsuit = read_csv("./Lawsuit.csv") %>% 
+lawsuit_base = read_csv("./Lawsuit.csv") %>% 
   janitor::clean_names() %>% 
   mutate(sal_avg = (sal94 + sal95)/2)
 ```
@@ -27,7 +43,7 @@ In this paper, we ask whether the gender gap existed among the faculty of Housto
 
 # Methods
 
-The data was collected as part of the plaintiff’s argument that females were less likely to be appointed full professors and earn less money than men. The data contains `r nrow(lawsuit)` rows, each representing a professor. There are `r ncol(lawsuit)` variables, giving different characteristics of the professor that may affect their salary. There are variables for their gender (female or male), department (Biochemistry/Molecular Biology, Physiology, Genetics, Pediatrics, Medicine, and Surgery), publication rate, experience (years since obtaining MD), and rank (assistant, associate or full professor).  We also have variables indicating if they have a clinical or research emphasis (clin), and whether they are Board certified (cert). To measure salary, we calculated an average of salary in 1994 and 1995. 
+The data was collected as part of the plaintiff’s argument that females were less likely to be appointed full professors and earn less money than men. The data contains `r nrow(lawsuit_base)` rows, each representing a professor. There are `r ncol(lawsuit_base)` variables, giving different characteristics of the professor that may affect their salary. There are variables for their gender (female or male), department (Biochemistry/Molecular Biology, Physiology, Genetics, Pediatrics, Medicine, and Surgery), publication rate, experience (years since obtaining MD), and rank (assistant, associate or full professor).  We also have variables indicating if they have a clinical or research emphasis (clin), and whether they are Board certified (cert). To measure salary, we calculated an average of salary in 1994 and 1995. 
     
 In Table 1, we can see the breakdown of all available variables across gender. Notably, the median salary for males is 163 thousand dollars annually, while for females it is 114 thousand. This relationship is further observed in Figure 1. We also see that males are more likely to be surgeons (23% of males, 5% of females), and females are more likely to work in pediatrics (19% of females, 6% of males). Females are more likely to have a clinical emphasis over research (43% of females, 35% of males), and to be Board certified (34% of females, 24% of males). The average publication rate of females is 5.35, compared to that of males at 4.65. Males have an average of 12 years of experience, while females have an average of 7 years. Lastly, females are much more likely to be assistant professors (65% of females, 28% of males), and males are much more likely to be full professors (15% of females, 45% of males). Given that all other potential explanatory variables of salary appear strongly correlated with gender, we conclude that they should all be considered as potential confounders when investigating the relationship between gender and salary. 
     
@@ -66,11 +82,185 @@ Lastly, in (additional materials) we stratified our main model into three models
 
 Our analysis shows that gender is not a significant indicator of salary after accounting for the interaction of rank and gender, and predictors department, clin (clinical or research emphasis ), cert(Board certified), experience (years since obtaining MD). Using an alpha level of 0.05, we found gender was only significant without the presence of rank in our model (model 2), but in our main model (model 1) we find that when rank and the interaction between rank and gender is accounted for, along with all other predictors besides prate, this significance disappears. This implies that while females earn significantly less than men, this association is entirely due to their positions, promotions, and lack thereof. A female who is equally qualified in terms of experience, research, department, and certification is much more likely to be an associate or assistant professor, and therefore to be paid less. However, were females to be placed in the same positions as men, these discrepancies in salary would disappear. Therefore, the female faculty of Houston College of Medicine were correct to object to the discrepancies in salary and position across gender. 
 
-# References : 
+# References: 
 1. Reese, Catherine C., and Barbara Warner. “Pay Equity in the States: An Analysis of the Gender–Pay Gap in the Public Sector.” Review of Public Personnel Administration, vol. 32, no. 4, Dec. 2012, pp. 312–331, doi:10.1177/0734371X11428616.
 
 2. Ginther, Donna K. “Is MIT an Exception? Gender Pay Differences in Academic Science.” Bulletin of Science, Technology & Society, vol. 23, no. 1, 2003, pp. 21–26., doi:10.1177/0270467602239767.
 
 3. Jagsi, Reshma, et al. “Gender Differences in the Salaries of Physician Researchers.” Jama, vol. 307, no. 22, 2012, doi:10.1001/jama.2012.6183.
+
+
+# Appendix
+
+
+### Table 1: Descriptive Statistics
+
+```{r, results="asis"}
+#descriptive table
+my_labels <- list(dept = "Dept (n%)", gender = "Gender, Male (n%)", clin = "Clin, Clinical Emphasis (n%)", cert = "Certfified, Yes (n%)", prate = "Publication rate", exper = "Experience (years)", rank = "Rank (n%)", sal94 = "Salary 1994", sal95 = "Salary 1995", sal_avg = "Avg Salary") 
+
+
+my_controls <- tableby.control(
+               total = F,
+               test=F,  
+               digits = 2, 
+               digits.pct = 2,
+               cat.simplify = T, 
+               numeric.stats = c("meansd", "medianq1q3"),
+               cat.stats = c("countpct"),
+               stats.labels = list(
+               meansd = "Mean (±SD)",
+               medianq1q3 = "Median (Q1, Q3)",
+               countpct = "N (%)"))
+
+
+data_tabl<- lawsuit_base %>% 
+          mutate(gender = factor(gender, labels= c("Female", "Male")), 
+                 dept = factor(dept, labels = c("Bio/Molecular Biology", "Physiology", "Genetics", "Pediatrics", "Medicine", "Surgery")), 
+                 clin = factor(clin, labels= c("Research emphasis", "Clinical emphasis")),
+                 cert = factor(cert, labels= c("Not certified", "Board certified")),
+                 rank = factor(rank, labels= c("Assistant", "Associate", "Full professor")))
+
+tab1 <- tableby(gender ~dept + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
+                data=data_tabl, 
+                control = my_controls)
+summary(tab1, 
+        labelTranslations = my_labels, text=T) 
+```
+
+
+
+
+
+```{r}
+#cleaning data
+lawsuit = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery"), 
+    
+         )
+```
+
+
+
+### Figure 1: Salary by Gender
+```{r}
+#######descriptive plots########## 
+#salary and gender
+lawsuit %>% 
+  mutate(gender = recode(gender, "0" = "female", "1" = "male")) %>% 
+  ggplot(aes(y = sal_avg, x = gender)) + 
+  geom_boxplot() + 
+  labs( y = "salary", x = "")
+```
+
+
+### Figure 2: Salary by Gender
+```{r}
+#salary and experience
+lawsuit %>% 
+  ggplot(aes(y = sal_avg, x = exper)) + 
+  geom_point() + 
+  labs(y = "salary", x = "experience (yrs)")
+```
+
+
+### Figure 3: Correlation Plot
+```{r}
+#correlation plot 
+lawsuit_cor = lawsuit_base %>% 
+  select(-id, - sal94, -sal95)
+cor(lawsuit_cor) %>%                            
+  corrplot(method = "circle", type = "upper", diag=FALSE)
+```
+
+
+### Figure 4: Salary Histogram
+```{r}
+#histograms of response var
+library(patchwork)
+reg_dense = lawsuit %>% 
+  ggplot(aes(x = sal_avg)) + 
+  geom_histogram(alpha = .6, color = "black") + 
+  labs(x = "salary", y = "count", title = "")
+
+ln_dens = lawsuit %>% 
+  ggplot(aes(x = ln_sal_avg)) + 
+  geom_histogram(alpha = .6, color = "black") + 
+  labs(x = "ln(salary)", y = "", title = "")
+
+reg_dense + ln_dens
+```
+
+
+
+```{r}
+#data for model 
+lawsuit_model = read_csv("./Lawsuit.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    sal_avg = (sal94 + sal95)/2, 
+    ln_sal_avg = log(sal_avg), 
+    gender = recode(gender, "0" = "female", "1" = "male"),
+    clin = recode(clin, "0" = "research", "1" = "clinical"), 
+    cert = recode(cert, "0" = "not certified", "1" = "certified"), 
+    rank = recode(rank, "1" = "assistant", "2" = "associate", "3" = "full professor"),
+    dept = recode(dept, "1" = "biochemistry", "2" = "physiology", "3" = "genetics", "4" = "pediatrics", "5" = "medicine", "6" = "surgery") ) %>% 
+  select(-c(sal94, sal95, sal_avg))
+
+#full model 
+full_model = lm(ln_sal_avg ~ gender * rank + . - id, lawsuit_model)
+```
+
+
+### Figure 6: Diagnostic Plots
+```{r}
+#no prate model 
+full_model_no_prate = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model)
+
+
+#model diagnostics
+
+par(mfrow=c(2,2))
+plot(full_model_no_prate)
+
+
+```
+
+
+
+```{r}
+#remove point 184
+lawsuit_model_new = lawsuit_model %>% 
+  filter(id != 184)
+```
+
+```{r}
+#new full model without point 
+full_model_no_prate_inter = lm(ln_sal_avg ~ gender * rank + . - prate- id, lawsuit_model_new)
+
+```
+
+```{r}
+# full model minus rank
+full_model_no_inter = lm(ln_sal_avg ~  . - prate- id - rank, lawsuit_model_new)
+
+```
+
+### Table 2: Main Models
+
+![](table4.png)
+
+### Table 3: Stratified Models
+
+
+![](table5.png)
 
 
