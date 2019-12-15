@@ -1,11 +1,17 @@
 ---
-title: "Final Report"
+title: "Gender Discrimination Among Academics in Medicine"
 output: pdf_document
+date: "December 16, 2019"
 author: "Charlotte R. Fowler(crf2147) Yingxi Ji(yj2579) Qi Lu(ql2370) Rebecca Silva(rs4025)"
 fontsize: 11pt
-header-includes:
-   - \usepackage{setspace, indentfirst}
-   - \doublespacing
+subparagraph: yes
+header-includes: |
+  \usepackage{titlesec}
+  \titlespacing{\section}{0pt}{12pt plus 2pt minus 1pt}{0pt plus 1pt minus 1pt}
+  \titlespacing{\subsection}{0pt}{12pt plus 2pt minus 1pt}{0pt plus 1pt minus 1pt}
+  \titlespacing{\subsubsection}{0pt}{12pt plus 2pt minus 1pt}{0pt plus 1pt minus 1pt}
+  \usepackage{setspace, indentfirst}
+  \doublespacing
 indent: true
 ---
 ```{r, echo = FALSE, message=FALSE, include=FALSE}
@@ -13,9 +19,10 @@ indent: true
 knitr::opts_chunk$set(
   echo = FALSE,
   message = FALSE,
-  warning = FALSE)
-
-
+  warning = FALSE, 
+  fig.width = 6.5, 
+  fig.height = 4.5,
+  out.width = "80%")
 
 #loading packages
 library(arsenal)
@@ -83,6 +90,7 @@ Our analysis shows that gender is not a significant indicator of salary after ac
 
 5. Yamatani, H., and H. Yamatani. "Gender and Salary Inequity: Statistical Interaction Effects." Social Work Research & Abstracts, vol. 18, no. 4, 12/01/1982, pp. 24-27, doi:10.1093/swra/18.4.24.
 
+\pagebreak
 
 # Appendix
 
@@ -165,7 +173,7 @@ lawsuit %>%
   labs(y = "salary", x = "experience (yrs)")
 ```
 
-### Figure 3: Salary Histogram
+### Figure 3: Distribution of Salary and Ln(Salary)
 ```{r}
 #histograms of response var
 library(patchwork)
