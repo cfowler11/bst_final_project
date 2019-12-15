@@ -127,7 +127,7 @@ data_tabl<- lawsuit_base %>%
 
 tab1 <- tableby(gender ~dept + clin + cert + prate + exper + rank + sal94 + sal95 + sal_avg, 
                 data=data_tabl, 
-                control = my_controls)
+                control = my_controls) 
 summary(tab1, 
         labelTranslations = my_labels, text=T) 
 ```
